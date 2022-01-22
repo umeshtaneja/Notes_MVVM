@@ -19,7 +19,9 @@ import kotlinx.android.synthetic.main.activity_add_note.*
 import java.io.File
 import java.io.IOException
 
-
+/**
+ * This activity is used to enter the new note.
+ */
 class AddNoteActivity : AppCompatActivity() {
 
     val REQUEST_IMAGE_CAPTURE = 1
@@ -32,6 +34,7 @@ class AddNoteActivity : AppCompatActivity() {
         supportActionBar?.title = "Add Note"
     }
 
+
     fun addImage(view: View) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_IMAGE_CAPTURE)
@@ -40,6 +43,9 @@ class AddNoteActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * method is used to take the image using camera
+     */
     private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             takePictureIntent.resolveActivity(packageManager)?.also {
@@ -61,14 +67,12 @@ class AddNoteActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            photoURI?.let { Utils.showImage(this,iv_note, it) }
+           Utils.showImage(this,iv_note, photoURI.toString())
         }
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -85,14 +89,16 @@ class AddNoteActivity : AppCompatActivity() {
         }
     }
 
-    fun addNote(view: View) {
+    /**
+     * method is used to add new note to Room DB.
+     */
+    fun addNoteToDB(view: View) {
         val noteTitle = et_title.text.toString()
         val noteContent = et_content.text.toString()
         if(noteTitle.isNotEmpty() && noteContent.isNotEmpty()){
-            noteVM.insertNote(Note(noteTitle,noteContent,photoURI))
-            et_title.setText("")
-            et_content.setText("")
-            Toast.makeText(this,"inserted", Toast.LENGTH_LONG).show()
+            noteVM.insertNote(Note(noteTitle,noteContent,photoURI.toString()))
+            Toast.makeText(this,"Note Inserted", Toast.LENGTH_LONG).show()
+            finish()
         }else{
             Toast.makeText(this,"Please fill all the details.", Toast.LENGTH_LONG).show()
         }

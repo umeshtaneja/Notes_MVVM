@@ -15,11 +15,14 @@ abstract class NotesDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE : NotesDatabase? = null
 
+        /**
+         * method is used to provide single instance of Room DB.
+         */
         fun getInstance(context: Context):NotesDatabase{
             return INSTANCE ?: synchronized(this){
                 val instance = Room.databaseBuilder(context.applicationContext,
                                 NotesDatabase :: class.java,
-                                "Nntes_Database").
+                                "Notes_Database").
                                 build()
                 INSTANCE = instance
                 instance
